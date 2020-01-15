@@ -61,6 +61,16 @@ class AppointmentController {
     }
 
     /**
+     * Verificando se o provider e o user são a mesma pessoa
+     */
+    const user = await User.findByPk(req.userId);
+    if (isProvider.id === user.id) {
+      return res
+        .status(401)
+        .json({ error: 'The provider cannot schedule for themselves.' });
+    }
+
+    /**
      * Verificando se data já passou
      */
     const hourStart = startOfHour(parseISO(date));
@@ -93,7 +103,6 @@ class AppointmentController {
     /**
      * Notificar prestador de serviço
      */
-    const user = await User.findByPk(req.userId);
     const formattedDate = format(
       hourStart,
       "'dia' dd 'de' MMMM', ás' H:mm'h'",
